@@ -225,8 +225,76 @@ create_payload_data() {
 
 }
 
-upate_change_ticket() {
-  true
+update_change_ticket() {
+  # API endpoint: https://sn_url.service-now.com/api/sn_chg_rest/v1/change/$change_sys_id
+  # parameters: change_sys_id, payload_data, sn_url, bearer_token, timeout
+  # called with: update_change_ticket -c "${change_ticket_sys_id}" -p "${payload_data}" -l "${sn_url}" -B "${BEARER_TOKEN}" -t "${timeout}"
+  # initialize variables
+    local OPTIND=1 # reset OPTIND so getopts starts at 1 and parameters are parsed correctly
+    local change_ticket_sys_id=""
+    local payload_data=""
+    local sn_url=""
+    local bearer_token=""
+    local timeout="60"
+    local api_endpoint="api/sn_chg_rest/v1/change"
+
+  # parse arguments
+  while getopts ":c:p:l:B:t:" arg; do
+    case "${arg}" in
+      c) change_ticket_sys_id="${OPTARG}" ;;
+      p) payload_data="${OPTARG}" ;;
+      l) sn_url="${OPTARG}" ;;
+      B) BEARER_TOKEN="${OPTARG}" ;;
+      t) timeout="${OPTARG}" ;;
+      :) err "Option -$OPTARG requires an argument."; exit 1 ;;
+      ?) err "Invalid option: -$OPTARG"; exit 1 ;;
+      *) err "Invalid option: -$OPTARG"; exit 1 ;;
+    esac
+  done
+
+  # debug output all passed parameters
+    dbg "update_change_ticket(): All passed parameters:"
+    dbg " change_ticket_sys_id: $change_ticket_sys_id"
+    dbg " payload_data: $payload_data"
+    dbg " sn_url: $sn_url"
+    if [[ "$DEBUG_PASS" == true ]]; then
+      dbg " BEARER_TOKEN: $BEARER_TOKEN"
+    fi
+    dbg " timeout: $timeout"
+  
+  # ensure required parameters are set
+  if [[ -z "$change_ticket_sys_id" || -z "$payload_data" || -z "$sn_url" || -z "$BEARER_TOKEN" ]]; then
+    err "update_change_ticket(): Missing required parameters: change_ticket_sys_id, payload_data, sn_url, or BEARER_TOKEN."
+    exit 1
+  fi
+
+  # build API URL
+  api_URL="${sn_url}/${api_endpoint}/${change_ticket_sys_id}"
+  dbg "update_change_ticket(): API URL: ${api_URL}"
+
+  # update change ticket
+
+  # save HTTP response code to variable 'code', API response to variable 'body'
+  # https://superuser.com/a/1321274
+  response=$(curl -s -k --location -w "\n%{http_code}" -X PATCH -H "Authorization: Bearer ${BEARER_TOKEN}" -H "Content-Type: application/json" -d "${payload_data}" "${api_URL}")
+  body=$(echo "$response" | sed '$d')
+  code=$(echo "$response" | tail -n1)
+
+  dbg "update_change_ticket(): HTTP code: $code"
+  # dbg "update_change_ticket(): Response: $body"
+
+  # check if response is 2xx
+  if [[ "$code" =~ ^2 ]]; then
+    # HTTP 2xx returned, successful API call
+    dbg "update_change_ticket(): Change ticket updated successfully."
+    echo "$body"
+    dbg "update_change_ticket(): Response: $body"
+  else
+    err "update_change_ticket(): Failed to update change ticket. HTTP response code: $code"
+    dbg "update_change_ticket(): Response: $body"
+    exit 1
+  fi
+
 }
 
 main() {
@@ -408,7 +476,10 @@ main() {
   payload_data=$(create_payload_data -w "${work_notes}" -s "${state}" -d "${close_code}" -n "${close_notes}")
 
   # update change ticket
-  response=$(upate_change_ticket)
+  # called with: update_change_ticket -c "${change_ticket_sys_id}" -p "${payload_data}" -l "${sn_url}" -B "${BEARER_TOKEN}" -t "${timeout}"
+  response=$(update_change_ticket -c "${change_ticket_sys_id}" -p "${payload_data}" -l "${sn_url}" -B "${BEARER_TOKEN}" -t "${timeout}")
+
+  echo "$response"
 
 }
 
