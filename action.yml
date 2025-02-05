@@ -1,0 +1,81 @@
+name: update_snow_change
+description: Update ServiceNow CHG ticket
+author: bwhitehead0
+inputs:
+  snow_url:
+    description: ServiceNow URL (e.g., https://my-company.service-now.com)
+    required: true
+  snow_user:
+    description: ServiceNow username (Username + password or token are required)
+    required: true
+  snow_password:
+    description: ServiceNow password (Username + password or token are required)
+    required: true
+  snow_client_id:
+    description: "ServiceNow Client ID for oAuth Token auth (Required: User + pass + client ID + client secret)"
+    required: false
+  snow_client_secret:
+    description: "ServiceNow Client Secret for oAuth Token auth (Required: User + pass + client ID + client secret)"
+    required: false
+  snow_change_sys_id:
+    description: ServiceNow Change Request sys_id
+    required: true
+  snow_change_work_notes:
+    description: Work notes to add to the change request
+    required: false
+  snow_change_state:
+    # valid states:
+      # new = -5
+      # assess = -4
+      # authorize = -3
+      # scheduled = -2
+      # implement = -1
+      # review = 0
+      # closed = 3
+      # canceled = 4
+    description: State to set the change request to
+    required: false
+  snow_change_close_code:
+    # valid close codes:
+      # successful
+      # unsuccessful
+      # successful with issues
+    description: Close code to set the change request to
+    required: false
+  snow_change_close_notes:
+    description: Close notes to set the change request to
+    required: false
+  debug:
+    description: Enable debug output
+    required: false
+    default: "false"
+  snow_timeout:
+    description: "Timeout for ServiceNow API call (default: 60)"
+    required: false
+    default: "60"
+outputs:
+  response:
+    description: The full JSON response from the ServiceNow API
+    value: ${{ steps.create_change.outputs.response }}
+runs:
+  using: composite
+  steps:
+    - name: Update ServiceNow Change Ticket
+      id: update_change
+      shell: bash
+      run: |
+        response=$(${{ github.action_path }}/assets/get_snow_change.sh \
+          -c "${{ inputs.snow_change_sys_id }}" \
+          -l "${{ inputs.snow_url }}" \
+          -u "${{ inputs.snow_user }}" \
+          -p "${{ inputs.snow_password }}" \
+          -C "${{ inputs.snow_client_id }}" \
+          -S "${{ inputs.snow_client_secret }}" \
+          -o "${{ inputs.snow_timeout }}" \
+          -D "${{ inputs.debug }}")
+        
+        echo "response=$response" >> $GITHUB_OUTPUT
+
+branding:
+  icon: "cloud-snow"
+  color: "orange"
