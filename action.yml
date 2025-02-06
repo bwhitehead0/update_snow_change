@@ -71,7 +71,7 @@ runs:
           -p "${{ inputs.snow_password }}" \
           -C "${{ inputs.snow_client_id }}" \
           -S "${{ inputs.snow_client_secret }}" \
-          -o "${{ inputs.snow_timeout }}" \
+          -t "${{ inputs.snow_timeout }}" \
           -D "${{ inputs.debug }}")
         
         echo "response=$(echo $response | jq -r '.result'" >> $GITHUB_OUTPUT
