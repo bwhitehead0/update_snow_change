@@ -79,7 +79,7 @@ runs:
           -n "${{ inputs.snow_change_close_notes }}" \
           -c "${{ inputs.snow_change_sys_id}}")
         
-        echo "response=$(echo $response | jq -r '.result'" >> $GITHUB_OUTPUT
+        echo "response=$(echo $response | jq -r '.result')" >> $GITHUB_OUTPUT
 
 branding:
   icon: "cloud-snow"
