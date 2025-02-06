@@ -79,6 +79,9 @@ runs:
           -n "${{ inputs.snow_change_close_notes }}" \
           -c "${{ inputs.snow_change_sys_id}}")
         
+        if [ "${{ inputs.debug }}" = "true" ]; then
+          echo "response: $response"
+        fi
         echo "response=$response" >> $GITHUB_OUTPUT
 
 branding:
