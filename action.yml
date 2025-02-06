@@ -64,7 +64,7 @@ runs:
       id: update_change
       shell: bash
       run: |
-        response=$(${{ github.action_path }}/assets/get_snow_change.sh \
+        response=$(${{ github.action_path }}/assets/update_snow_change.sh \
           -c "${{ inputs.snow_change_sys_id }}" \
           -l "${{ inputs.snow_url }}" \
           -u "${{ inputs.snow_user }}" \
