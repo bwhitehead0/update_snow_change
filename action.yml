@@ -63,6 +63,7 @@ runs:
     - name: Update ServiceNow Change Ticket
       id: update_change
       shell: bash
+      #echo "api_response=$response" >> $GITHUB_OUTPUT
       run: |
         response=$(${{ github.action_path }}/assets/update_snow_change.sh \
           -c "${{ inputs.snow_change_sys_id }}" \
@@ -83,7 +84,8 @@ runs:
           echo "API response: $response"
         fi
 
-        echo "api_response=$response" >> $GITHUB_OUTPUT
+        printf '%s\n' "api_response=$response" >> $GITHUB_OUTPUT
+
 
 branding:
   icon: "cloud-snow"
