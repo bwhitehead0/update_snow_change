@@ -479,7 +479,9 @@ main() {
   # called with: update_change_ticket -c "${change_ticket_sys_id}" -p "${payload_data}" -l "${sn_url}" -B "${BEARER_TOKEN}" -t "${timeout}"
   response=$(update_change_ticket -c "${change_ticket_sys_id}" -p "${payload_data}" -l "${sn_url}" -B "${BEARER_TOKEN}" -t "${timeout}")
 
-  echo "$response"
+  # echo "$response"
+  # use printf to output the response without interpreting escape sequences
+  printf '%s\n' "$response"
 
 }
 
