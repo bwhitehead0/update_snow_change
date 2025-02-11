@@ -30,9 +30,11 @@ check_application_installed() {
 }
 
 escape_json() {
+  # updated perl to handle newlines and carriage returns without double escaping
   local input="$1"
   local escaped=""
-  escaped=$(printf '%s' "$input" | perl -pe 's/\\/\\\\/g; s/"/\\"/g; s/\//\\\//g; s/\x08/\\b/g; s/\f/\\f/g; s/\n/\\n/g; s/\r/\\r/g; s/\t/\\t/g')
+  # escaped=$(printf '%s' "$input" | perl -pe 's/\\/\\\\/g; s/"/\\"/g; s/\//\\\//g; s/\x08/\\b/g; s/\f/\\f/g; s/\n/\\n/g; s/\r/\\r/g; s/\t/\\t/g')
+  escaped=$(printf '%s' "$input" | perl -pe 's/\\(?![nrtbf\/"])/\\\\/g; s/"/\\"/g; s/\//\\\//g; s/\x08/\\b/g; s/\f/\\f/g; s/(?<!\\)\n/\\n/g; s/(?<!\\)\r\n/\\r\\n/g; s/\t/\\t/g')
   printf '%s' "$escaped"
 }
 
