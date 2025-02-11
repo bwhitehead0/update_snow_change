@@ -82,7 +82,7 @@ runs:
           -c "${{ inputs.snow_change_sys_id}}")
         
         if [ "${{ inputs.debug }}" = "true" ]; then
-          echo "API response: $response"
+          printf '%s\n' "API response: $response"
         fi
 
 branding:

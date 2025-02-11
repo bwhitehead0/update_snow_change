@@ -8,13 +8,13 @@ DEBUG="false"
 # error output function
 err() {
   # date format year-month-day hour:minute:second.millisecond+timezone - requires coreutils date
-    echo "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Error - $1" >&2
+    printf '%s\n' "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Error - $1" >&2
 }
 
 dbg() {
   # date format year-month-day hour:minute:second.millisecond+timezone - requires coreutils date
   if [[ "$DEBUG" == "true" ]]; then
-    echo "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Debug - $1" >&2
+    printf '%s\n' "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Debug - $1" >&2
   fi
 }
 
@@ -277,7 +277,7 @@ update_change_ticket() {
   # save HTTP response code to variable 'code', API response to variable 'body'
   # https://superuser.com/a/1321274
   response=$(curl -s -k --location -w "\n%{http_code}" -X PATCH -H "Authorization: Bearer ${BEARER_TOKEN}" -H "Content-Type: application/json" -d "${payload_data}" "${api_URL}")
-  body=$(echo "$response" | sed '$d')
+  body=$(printf '%s\n' "$response" | sed '$d')
   code=$(echo "$response" | tail -n1)
 
   dbg "update_change_ticket(): HTTP code: $code"
@@ -287,7 +287,7 @@ update_change_ticket() {
   if [[ "$code" =~ ^2 ]]; then
     # HTTP 2xx returned, successful API call
     dbg "update_change_ticket(): Change ticket updated successfully."
-    echo "$body"
+    printf '%s\n' "$body"
     dbg "update_change_ticket(): Response: $body"
   else
     err "update_change_ticket(): Failed to update change ticket. HTTP response code: $code"
