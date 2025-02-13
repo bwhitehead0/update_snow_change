@@ -44,13 +44,11 @@ jobs:
 * `snow_password`: ServiceNow password (Username + password or token are required). **Required**.
 * `snow_client_id`: ServiceNow Client ID for oAuth Token auth. **Optional** (Requires: User + pass + client ID + client secret).
 * `snow_client_secret`: ServiceNow Client Secret for oAuth Token auth. **Optional** (Requires: User + pass + client ID + client secret).
-
-
 * `snow_change_sys_id`: ServiceNow Change Request sys_id. **Required**.
-* `snow_change_work_notes`: Work notes to add to the change request. **Optional**.
+* `snow_change_work_notes`: Work notes to add to the change request. **Optional**. (*See below ⚠️ note*)
 * `snow_change_state`: State to set the change request to (see valid states below). **Optional**.
 * `snow_change_close_code`: Close code to set the change request to ('Successful', 'Unsuccessful', 'Successful with issues'). **Optional**.
-* `snow_change_close_notes`: Close notes to set the change request to. **Optional**.
+* `snow_change_close_notes`: Close notes to set the change request to. **Optional**. (*See below ⚠️ note*)
 * `debug`: Enable debug output. **Optional**.
 * `snow_timeout`: Timeout for ServiceNow API call. **Optional**, default='60'.
 
@@ -63,7 +61,7 @@ jobs:
 
 Your ticket workflow requirements may vary, but this example creates a new CHG ticket, updates the ticket to start a deployment, does some dummy deployment activity, updates the ticket notes, and moves the ticket towards closure, eventually closing the ticket with close notes.
 
-> **⚠️ Note:** Due both to the limitations of GitHub Actions inputs, as well as the nature of the JSON payload sent to the ServiceNow API, constructing multiline values for fields that accept multiline input, such as `work_notes`, `close_notes`, etc, for now it is recommended to build the string in its own step using variables for human readability and clarity, and then concatenate them when writing either to `$GITHUB_ENV` or `$GITHUB_OUTPUT`. Examples of this are found in the below workflow steps named `Create work_notes message` and `Create post-deploy work_notes message`.
+> **⚠️ Note about multiline strings:** Due both to the limitations of GitHub Actions inputs, as well as the nature of the JSON payload sent to the ServiceNow API, constructing multiline values for fields that accept multiline input, such as `work_notes`, `close_notes`, etc, for now it is recommended to build the string in its own step using component variables for human readability and clarity. Include newlines `\r\n` in these variables, and then concatenate them when writing either to `$GITHUB_ENV` or `$GITHUB_OUTPUT`. Examples of this are found in the below workflow steps named `Create work_notes message` and `Create post-deploy work_notes message`.
 
 ```yaml
 name: Example CD workflow
