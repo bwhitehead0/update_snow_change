@@ -18,7 +18,7 @@ env:
   SN_URL: "https://my_company.service-now.com"
 
 jobs:
-  encode:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
