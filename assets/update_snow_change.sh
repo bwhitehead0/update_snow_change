@@ -8,13 +8,13 @@ DEBUG="false"
 # error output function
 err() {
   # date format year-month-day hour:minute:second.millisecond+timezone - requires coreutils date
-    printf '%s\n' "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Error - $1" >&2
+    printf '%s' "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Error - $1" >&2
 }
 
 dbg() {
   # date format year-month-day hour:minute:second.millisecond+timezone - requires coreutils date
   if [[ "$DEBUG" == "true" ]]; then
-    printf '%s\n' "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Debug - $1" >&2
+    printf '%s' "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Debug - $1" >&2
   fi
 }
 
@@ -215,6 +215,7 @@ create_payload_data() {
 
   payload_data="{${payload_data}}"
   # silently validate the JSON
+  # ! we may need to update the echo to printf '%s' to handle escape sequences correctly
   if ! echo "$payload_data" | jq empty > /dev/null 2>&1; then
     err "Invalid JSON payload. Check input values."
     exit 1
@@ -278,8 +279,9 @@ update_change_ticket() {
 
   # save HTTP response code to variable 'code', API response to variable 'body'
   # https://superuser.com/a/1321274
+  # ! we may need to update the echo to printf '%s' to handle escape sequences correctly
   response=$(curl -s -k --location -w "\n%{http_code}" -X PATCH -H "Authorization: Bearer ${BEARER_TOKEN}" -H "Content-Type: application/json" -d "${payload_data}" "${api_URL}")
-  body=$(printf '%s\n' "$response" | sed '$d')
+  body=$(printf '%s' "$response" | sed '$d')
   code=$(echo "$response" | tail -n1)
 
   dbg "update_change_ticket(): HTTP code: $code"
@@ -289,7 +291,7 @@ update_change_ticket() {
   if [[ "$code" =~ ^2 ]]; then
     # HTTP 2xx returned, successful API call
     dbg "update_change_ticket(): Change ticket updated successfully."
-    printf '%s\n' "$body"
+    printf '%s' "$body"
     dbg "update_change_ticket(): Response: $body"
   else
     err "update_change_ticket(): Failed to update change ticket. HTTP response code: $code"
@@ -483,7 +485,7 @@ main() {
 
   # echo "$response"
   # use printf to output the response without interpreting escape sequences
-  printf '%s\n' "$response"
+  printf '%s' "$response"
 
 }
 
