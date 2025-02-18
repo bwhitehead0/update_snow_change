@@ -64,7 +64,7 @@ runs:
       id: update_change
       shell: bash
       # echo "api_response=$response" >> $GITHUB_OUTPUT
-      # printf '%s\n' "api_response=$response" >> $GITHUB_OUTPUT
+      # printf '%s' "api_response=$response" >> $GITHUB_OUTPUT
       run: |
         response=$(${{ github.action_path }}/assets/update_snow_change.sh \
           -c "${{ inputs.snow_change_sys_id }}" \
@@ -82,7 +82,7 @@ runs:
           -c "${{ inputs.snow_change_sys_id}}")
         
         if [ "${{ inputs.debug }}" = "true" ]; then
-          printf '%s\n' "API response: $response"
+          printf '%s' "API response: $response"
         fi
 
 branding:
