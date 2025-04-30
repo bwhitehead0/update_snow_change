@@ -8,13 +8,13 @@ DEBUG="false"
 # error output function
 err() {
   # date format year-month-day hour:minute:second.millisecond+timezone - requires coreutils date
-    printf '%s' "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Error - $1" >&2
+    printf '%s\n' "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Error - $1" >&2
 }
 
 dbg() {
   # date format year-month-day hour:minute:second.millisecond+timezone - requires coreutils date
   if [[ "$DEBUG" == "true" ]]; then
-    printf '%s' "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Debug - $1" >&2
+    printf '%s\n' "$(date +'%Y-%m-%dT%H:%M:%S.%3N%z') - Debug - $1" >&2
   fi
 }
 
